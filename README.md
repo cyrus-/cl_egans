@@ -1,4 +1,4 @@
-CLegans - A package for writing high-performance Ace.OpenCL-based simulations
+CLegans - a package for writing high-performance Ace.OpenCL-based simulations
 
 **Q**: What kind of simulations?  
 **A**: Currently, CLegans focuses on spiking neural circuit simulations, but there is nothing preventing you from doing other step-based (rather than event-based) simulations straightforwardly.  
