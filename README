@@ -1,1 +1,12 @@
-CLegans - An Ace.OpenCL-based simulation package
+CLegans - A package for writing high-performance Ace.OpenCL-based simulations
+
+What kind of simulations?
+
+  Currently, CLegans focuses on spiking neural circuit simulations.
+
+What's what the name?
+
+  CLegans is named after (and pronounced like) c. elegans, a tiny nematode worm with the distinction of being the only organism with a fully-mapped nervous system.
+
+
+
