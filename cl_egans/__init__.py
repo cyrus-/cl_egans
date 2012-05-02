@@ -140,6 +140,7 @@ API
 import numpy
 import cypy as py
 import cypy.cg as cg
+import clq.backends.opencl as clqcl
 import clq.backends.opencl.pyocl as cl 
 
 class Error(Exception):
@@ -735,7 +736,7 @@ class Array(MemoryNode):
 #    def post_allocate(self):
 #        sim = self.sim
 #        self.state = Allocation(self, "state", 
-#            (sim.n_work_items,), cl.cl_int)
+#            (sim.n_work_items,), clqcl.int)
 #        
 #        if self.initializer is None:
 #            self.initializer = self.randf.initializer
@@ -894,7 +895,7 @@ class PerElementProbe(ConstrainedProbe):
     @py.autoinit
     def __init__(self, parent, basename="PerElementProbe",
                  buffer_timepoints=None,
-                 cl_dtype=cl.cl_float): 
+                 cl_dtype=clqcl.float): 
         pass
     
     buffer_timepoints = None
