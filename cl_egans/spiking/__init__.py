@@ -20,15 +20,15 @@
 # You should have received a copy of the GNU Lesser General Public License along
 # with the atomic-hedgehog package. If not, see <http://www.gnu.org/licenses/>.
 """Spiking neural network simulations."""
-import ahh.py as py
-import ahh.cl as cl
-from ahh.cl.egans import Node, StandaloneCode, Allocation
+import cypy as py
+import clq.backends.opencl as clqcl
+from cl_egans import Node, StandaloneCode, Allocation
 
 class State(Node):
     """A state variable in a spiking model node."""
     @py.autoinit
     def __init__(self, parent, basename, #@UnusedVariable
-                 cl_dtype=cl.cl_float, #@UnusedVariable
+                 cl_dtype=clqcl.float, #@UnusedVariable
                  calculations=None, calculations_hook="in_state_calculations", #@UnusedVariable
                  spike_updater=None, no_spike_updater=None, #@UnusedVariable
                  initializer=None): #@UnusedVariable

@@ -163,6 +163,10 @@ class Node(cg.Node):
         the root from this node.
         """
         return self.getrec('model', False)
+    
+class StandaloneCode(cg.StandaloneCode, Node):
+    """A cl_egans StandaloneCode node. See the 
+    `base class <cypy.cg.StandaloneCode>`_."""
 
 class Simulation(Node):
     """The root node of a Simulation tree.
