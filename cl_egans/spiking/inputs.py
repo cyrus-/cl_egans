@@ -19,10 +19,11 @@
 #
 # You should have received a copy of the GNU Lesser General Public License along
 # with the atomic-hedgehog package. If not, see <http://www.gnu.org/licenses/>.
+
 import numpy
-import ahh.py as py
-from ahh.cl.egans import Node
-from ahh.cl.egans.spiking import State, InitializeFromHost
+import cypy as py
+from cl_egans import Node
+from cl_egans.spiking import State, InitializeFromHost
 
 class Current(Node):
     """Specifies a current."""
