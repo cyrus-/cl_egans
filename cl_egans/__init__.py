@@ -19,7 +19,7 @@ simulation may require a slightly different set of capabilities. For example,
 you may want to probe different quantities on different runs. We need a way to 
 build particular simulations using composable components.
 
-In CLegans, these composable components are called *nodes* and they are 
+In cl_egans, these composable components are called *nodes* and they are 
 arranged in a tree. A node is an instance of the :class:`Node` class.
 
 The root node of all simulations is an instance of the :class:`Simulation` 
@@ -118,10 +118,10 @@ number of realizations per division. The final division may contain fewer than
 this many realizations if the number of realizations is not divisible by this
 quantity. 
 
-CLegans?
+cl_egans?
 *********
 My primary purpose in designing this module was to accelerate spiking 
-neurobiological circuit simulations (see :mod:`pyoclegans.spiking`). 
+neurobiological circuit simulations (see :mod:`pyocl_egans.spiking`). 
 `Caenorhabditis elegans`, or 
 `c. elegans <http://en.wikipedia.org/wiki/Caenorhabditis_elegans>`_, is a model 
 organism in neuroscience. It is one of the simplest organisms with a nervous 
@@ -143,11 +143,11 @@ import cypy.cg as cg
 import clq.backends.opencl.pyocl as cl 
 
 class Error(Exception):
-    """Base class for errors in pyoclegans."""
+    """Base class for errors in pyocl_egans."""
     pass
 
-class Node(Node):
-    """A CLegans Node. See the `base class <cypy.cg.Node>`_ for more 
+class Node(cg.Node):
+    """A cl_egans Node. See the `base class <cypy.cg.Node>`_ for more 
     attributes.""" 
     @property
     def sim(self):
