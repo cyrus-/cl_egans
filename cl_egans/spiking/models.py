@@ -21,9 +21,9 @@
 # with the atomic-hedgehog package. If not, see <http://www.gnu.org/licenses/>.
 """Neuron models live here."""
 import numpy
-import ahh.py as py
-from ahh.cl.egans import Model
-from ahh.cl.egans.spiking import State, InitializeFromHost
+import cypy as py
+from cl_egans import Model
+from cl_egans.spiking import State, InitializeFromHost
 
 class SpikingModel(Model):
     """The base class of all spiking models."""
