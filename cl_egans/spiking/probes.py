@@ -22,10 +22,10 @@
 """Probes live here."""
 
 import numpy
-import ahh.py as py
-import ahh.cl as cl
-import ahh.cl.ements as clements
-from ahh.cl.egans import ConstrainedProbe, PerElementProbe, Allocation
+import cypy as py
+import clq.backends.opencl as clqcl
+import clq.stdlib as clqstd
+from cl_egans import ConstrainedProbe, PerElementProbe, Allocation
 
 class SpikeRasterProbe(PerElementProbe):
     """A :class:`PerElementProbe <ahh.cl.egans.PerElementProbe>` which records
@@ -33,7 +33,7 @@ class SpikeRasterProbe(PerElementProbe):
     
     @py.autoinit
     def __init__(self, parent, basename="SpikeRasterProbe",
-                 cl_dtype=cl.cl_int): pass
+                 cl_dtype=clqcl.int): pass
     
     def pre_spike_generated(self, g):
         self.constrain(g)
@@ -58,15 +58,15 @@ class SpikeListProbe(PerElementProbe):
     """
     @py.autoinit
     def __init__(self, parent, basename="SpikeListProbe",
-                 cl_dtype=cl.cl_uint): pass
+                 cl_dtype=clqcl.uint): pass
 
     def on_finalize(self):
         super(SpikeListProbe, self).on_finalize()
         self.count_allocation = Allocation(self, "count", 
-           (self.buffer_timepoints, self.n_realizations), cl.cl_uint)
+           (self.buffer_timepoints, self.n_realizations), clqcl.uint)
         
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
-        clements.ew_set_0(self.count_allocation.buffer)
+        clqstd.ew_set_0(self.count_allocation.buffer)
         
     def pre_spike_generated(self, g):
         self.constrain(g)
@@ -109,14 +109,14 @@ class SpikeScatterProbe(ConstrainedProbe):
         if max_spikes is None:
             max_spikes = self.max_spikes = (self.total_n_timesteps *
                 self.n_elms * self.n_realizations)
-        self.count_allocation = Allocation(self, "count", (1,), cl.cl_uint)
+        self.count_allocation = Allocation(self, "count", (1,), clqcl.uint)
         self.spike_times_allocation = Allocation(self, "spike_times", 
              (max_spikes,), self.time_expr_cl_dtype)
         self.spike_indices_allocation = Allocation(self, "spike_indices", 
-             (max_spikes,), cl.cl_uint)
+             (max_spikes,), clqcl.uint)
         
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
-        clements.ew_set_0(self.count_allocation.buffer)
+        clqstd.ew_set_0(self.count_allocation.buffer)
         
     def pre_spike_generated(self, g):
         self.constrain(g)
@@ -129,7 +129,7 @@ class SpikeScatterProbe(ConstrainedProbe):
         
     idx = "idx_model - idx_start"
     time_expr = "timestep - t_start"
-    time_expr_cl_dtype = cl.cl_uint  # should be inferrable but not yet
+    time_expr_cl_dtype = clqcl.uint  # should be inferrable but not yet
     
     def get_data(self):
         """Return the spike_times and spike_indices."""
@@ -156,7 +156,7 @@ class BinnedSpikeCountProbe(PerElementProbe):
                  bin_size=1,
                  shift_size=1,
                  
-                 cl_dtype=cl.cl_uint,
+                 cl_dtype=clqcl.uint,
                  ): pass
     
     def on_finalize(self):
@@ -169,7 +169,7 @@ class BinnedSpikeCountProbe(PerElementProbe):
         assert self.t_step == 1
         
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
-        clements.ew_set_0(self.allocation.buffer)
+        clqstd.ew_set_0(self.allocation.buffer)
         
     @property
     def n_bins(self):
