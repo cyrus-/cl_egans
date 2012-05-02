@@ -22,10 +22,10 @@
 """Connectivity and communication stuff lives here."""
 #@PydevCodeAnalysisIgnore
 
-import ahh.py as py
-import ahh.cl as cl
-import ahh.cl.ements as clements
-from ahh.cl.egans import Node, Allocation
+import cypy as py
+import clq.backends.opencl as clqcl
+import clq.stdlib as clqstd
+from cl_egans import Node, Allocation
 
 class AtomicSender(Node):
     """Sends spikes using atomic operations."""
@@ -88,7 +88,7 @@ class AtomicReceiver(Node):
     
     @py.lazy(property)
     def alloc_in(self):
-        return Allocation(self, "in", self._buffer_size, cl.cl_int)
+        return Allocation(self, "in", self._buffer_size, clqcl.int)
     
     @py.lazy(property)
     def buffer_in(self):
@@ -96,15 +96,15 @@ class AtomicReceiver(Node):
     
     @py.lazy(property)
     def alloc_out(self):
-        return Allocation(self, "out", self._buffer_size, cl.cl_int)
+        return Allocation(self, "out", self._buffer_size, clqcl.int)
     
     @py.lazy(property)
     def buffer_out(self):
         return self.alloc_out.buffer
     
     def on_initialize_memory(self, timestep_info):
-        clements.ew_set_0(self.buffer_in)
-        clements.ew_set_0(self.buffer_out)
+        clqstd.ew_set_0(self.buffer_in)
+        clqstd.ew_set_0(self.buffer_out)
     
     def on_prepare_step_fn_odd(self):
         # switch out with in on odd timesteps
