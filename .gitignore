@@ -1,0 +1,7 @@
+*.settings
+*.project
+*.pydevproject
+*.pyo
+*.pyc
+*.DS_Store
+
