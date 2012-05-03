@@ -125,8 +125,6 @@ tic("Generating code...")
 sim.generate()
 toc()
 print sim.code
-import ast
-ast.dump(ast.parse(sim.code))
 
 # Allocate memory
 tic("Allocating memory...")
