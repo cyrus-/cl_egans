@@ -46,7 +46,7 @@ class AtomicSender(Node):
         
     def pre_step_kernel_body(self, g):
         # TODO: remove this once extension inference works
-        g << 'exec "' << cl.cl_khr_global_int32_base_atomics.pragma_str[1:-1] << '"\n'
+        g << 'exec "' << clqcl.cl_khr_global_int32_base_atomics.pragma_str << '"\n'
     
 class AtomicReceiver(Node):
     """Receives spikes and converts them into conductance updates. The parent

@@ -25,14 +25,14 @@ Implements the Brette et al, 2007 COBA benchmark. See paper for details.
 """
 
 import numpy
-import clq.backends.opencl.pyopencl as cl 
+import clq.backends.opencl.pyocl as cl 
 from cypy import tic, toc
 
 # Set up an OpenCL context
 ctx = cl.ctx = cl.Context.for_device(0, 0)
 
 # Create the root node of the simulation
-from ahh.cl.egans import Simulation
+from cl_egans import Simulation
 sim = Simulation(ctx,
     n_realizations=1,
     n_realizations_per_division_max=1,
@@ -43,8 +43,8 @@ sim = Simulation(ctx,
 N_Exc = 3200
 N_Inh = 800
 N = N_Exc + N_Inh
-from ahh.cl.egans.spiking.models import ReducedLIF
-from ahh.cl.egans.spiking import InitializeFromHost
+from cl_egans.spiking.models import ReducedLIF
+from cl_egans.spiking import InitializeFromHost
 neurons = ReducedLIF(sim, "LIF", 
     count=N,
     tau=20.0,
@@ -56,7 +56,7 @@ InitializeFromHost(neurons.v,
    lambda shape, dtype: numpy.random.normal(-5.0, 5.0, shape).astype(dtype)) 
 
 # Create excitatory and inhibitory synapses
-from ahh.cl.egans.spiking.inputs import ExponentialSynapse
+from cl_egans.spiking.inputs import ExponentialSynapse
 e_synapse = ExponentialSynapse(neurons, 'ge',
     tau=5.0,
     reversal=60.0)
@@ -70,18 +70,18 @@ InitializeFromHost(i_synapse.g,
     lambda shape, dtype: numpy.random.normal(20.0, 12.0, shape).astype(dtype))
 
 # Insert Poisson spikes
-from ahh.cl.egans.spiking.inputs import LocalPoisson
+from cl_egans.spiking.inputs import LocalPoisson
 e_poisson = LocalPoisson(e_synapse, rate=100)
 
 # Create connectivity matrix
-from ahh.cl.egans import ConstantArray
-from ahh.np import DirectedAdjacencyMatrix
+from cl_egans import ConstantArray
+from cypy.np import DirectedAdjacencyMatrix
 cm = DirectedAdjacencyMatrix(N)
 cm.connect_randomly(0.0)
 neighbor_data = ConstantArray(sim, "neighbor_data", cm.packed)
 
 # Set up a spike propagation algorithm
-from ahh.cl.egans.spiking.connectivity import AtomicReceiver, AtomicSender
+from cl_egans.spiking.connectivity import AtomicReceiver, AtomicSender
 e_receiver = AtomicReceiver(e_synapse, weight=0.6)
 i_receiver = AtomicReceiver(i_synapse, weight=6.7)
 sender = AtomicSender(neurons,
@@ -90,31 +90,31 @@ sender = AtomicSender(neurons,
 sender.ge = e_receiver.alloc_out
 sender.gi = i_receiver.alloc_out
 
-from ahh.cl.egans import AccumulateOnHost
+from cl_egans import AccumulateOnHost
 
 # Set up a spike raster probe
-#from ahh.cl.egans.spiking.probes import SpikeRasterProbe
+#from cl_egans.spiking.probes import SpikeRasterProbe
 #raster_probe = AccumulateOnHost(SpikeRasterProbe(neurons))
 
 # Set up voltage expression probe
-#from ahh.cl.egans import ExpressionProbe, AccumulateOnHost
+#from cl_egans import ExpressionProbe, AccumulateOnHost
 #v_probe = AccumulateOnHost(ExpressionProbe(neurons,
 #    expression="v",
 #    cl_dtype=cl.cl_float,
 #    hook="post_read_state"))
 
 # Set up spike list probe
-#from ahh.cl.egans.spiking.probes import SpikeListProbe
+#from cl_egans.spiking.probes import SpikeListProbe
 #spike_list_probe = AccumulateOnHost(SpikeListProbe(neurons))
 #
 ## Set up binned spike count probe
-#from ahh.cl.egans.spiking.probes import BinnedSpikeCountProbe
+#from cl_egans.spiking.probes import BinnedSpikeCountProbe
 #binned_spike_count_probe = AccumulateOnHost(BinnedSpikeCountProbe(neurons,
 #    bin_size=100,
 #    shift_size=100))
 
 # Set up spike scatter probe
-from ahh.cl.egans.spiking.probes import SpikeScatterProbe
+from cl_egans.spiking.probes import SpikeScatterProbe
 spike_scatter_probe = SpikeScatterProbe(neurons)
 
 # Finalize specification

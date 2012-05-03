@@ -140,8 +140,11 @@ API
 import numpy
 import cypy as py
 import cypy.cg as cg
+import clq
+import clq.stdlib as clqstd
 import clq.backends.opencl as clqcl
 import clq.backends.opencl.pyocl as cl 
+
 
 class Error(Exception):
     """Base class for errors in pyocl_egans."""
@@ -716,49 +719,49 @@ class Array(MemoryNode):
         """:meth:`pyocl.Context.to_device`"""
         return self.sim.ctx.to_device
     
-#class RNG(Node):
-#    """Enables random number generation. See :data:`Simulation.rng`.
-#    
-#    Once enabled, the functions ``randf``, ``randexp`` and ``randn`` can be
-#    used in generated code.
-#    """
-#    
-#    @py.autoinit
-#    def __init__(self, parent, basename="RNG"): pass
-#    
-#    randf = clements.simple_randf
-#    """The base random number function to use. Defaults to 
-#    :data:`CLements.simple_randf`."""
-#    
-#    initializer = None
-#    # The initializer to use for the random number generator's state. Defaults
-#    # to randf.initializer.
-#    
-#    state = None
-#    """Contains the state allocation after finalization."""
-#    
-#    def post_allocate(self):
-#        sim = self.sim
-#        self.state = Allocation(self, "state", 
-#            (sim.n_work_items,), clqcl.int)
-#        
-#        if self.initializer is None:
-#            self.initializer = self.randf.initializer
-#
-#        randf = self.randf
-#        state = self.state.buffer
-#        randf_bound = self.randf_bound = cloquence.fn(randf, 
-#            state=state)
-#        
-#        sim.constants['randf'] = randf_bound
-#        sim.constants['randexp'] = cloquence.fn(clements.randexp, 
-#                                                randf=randf, state=state)
-#        sim.constants['randn'] = cloquence.fn(clements.randn, 
-#                                              randf=randf, state=state)
-#        
-#    def on_initialize_memory(self, timestep_info): #@UnusedVariable
-#        sim = self.sim
-#        sim.ctx.memcpy(self.state.buffer, self.initializer(sim.n_work_items))
+class RNG(Node):
+    """Enables random number generation. See :data:`Simulation.rng`.
+    
+    Once enabled, the functions ``randf``, ``randexp`` and ``randn`` can be
+    used in generated code.
+    """
+    
+    @py.autoinit
+    def __init__(self, parent, basename="RNG"): pass
+    
+    randf = clqstd.simple_randf
+    """The base random number function to use. Defaults to 
+    :data:`clqstd.simple_randf`."""
+    
+    initializer = None
+    # The initializer to use for the random number generator's state. Defaults
+    # to randf.initializer.
+    
+    state = None
+    """Contains the state allocation after finalization."""
+    
+    def post_allocate(self):
+        sim = self.sim
+        self.state = Allocation(self, "state", 
+            (sim.n_work_items,), clqcl.int)
+        
+        if self.initializer is None:
+            self.initializer = self.randf.initializer
+
+        randf = self.randf
+        state = self.state.buffer
+        randf_bound = self.randf_bound = clq.fn(randf, 
+            state=state)
+        
+        sim.constants['randf'] = randf_bound
+        sim.constants['randexp'] = clq.fn(clqstd.randexp, 
+                                                randf=randf, state=state)
+        sim.constants['randn'] = clq.fn(clqstd.randn, 
+                                              randf=randf, state=state)
+        
+    def on_initialize_memory(self, timestep_info): #@UnusedVariable
+        sim = self.sim
+        sim.ctx.memcpy(self.state.buffer, self.initializer(sim.n_work_items))
         
 class Probe(Node):
     """Abstract base class for all data probes."""
