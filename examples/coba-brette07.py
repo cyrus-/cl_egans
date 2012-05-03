@@ -1,24 +1,3 @@
-# All content Copyright 2010 Cyrus Omar <cyrus.omar@gmail.com> unless otherwise
-# specified.
-#
-# Contributors:
-#     Cyrus Omar <cyrus.omar@gmail.com>
-#
-# This file is part of, and licensed under the terms of, the atomic-hedgehog
-# package.
-#
-# The atomic-hedgehog package is free software: you can redistribute it and/or
-# modify it under the terms of the GNU Lesser General Public License as
-# published by the Free Software Foundation, either version 3 of the License,
-# or (at your option) any later version.
-#
-# The atomic-hedgehog package is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-# License for more details.
-#
-# You should have received a copy of the GNU Lesser General Public License along
-# with the atomic-hedgehog package. If not, see <http://www.gnu.org/licenses/>.
 """This is a sample script used for testing. 
 
 Implements the Brette et al, 2007 COBA benchmark. See paper for details.
