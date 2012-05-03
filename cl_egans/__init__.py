@@ -446,7 +446,7 @@ class Simulation(Node):
         if not self.generated:
             self.generate()
         self.trigger_staged_hook("prepare_step_fn_even")        
-        return cloquence.from_source(self.code, 
+        return clq.from_source(self.code, 
             constants=self.constants, size_calculator=self._size_calculator)
         
     @py.lazy(property)
@@ -454,7 +454,7 @@ class Simulation(Node):
         if not self.generated:
             self.generate()
         self.trigger_staged_hook("prepare_step_fn_odd")
-        return cloquence.from_source(self.code, 
+        return clq.from_source(self.code, 
             constants=self.constants, size_calculator=self._size_calculator)
     
     @property
@@ -737,27 +737,24 @@ class RNG(Node):
     # The initializer to use for the random number generator's state. Defaults
     # to randf.initializer.
     
-    state = None
+    rng_state = None
     """Contains the state allocation after finalization."""
     
     def post_allocate(self):
         sim = self.sim
-        self.state = Allocation(self, "state", 
+        self.rng_state = Allocation(self, "rng_state", 
             (sim.n_work_items,), clqcl.int)
         
         if self.initializer is None:
             self.initializer = self.randf.initializer
 
         randf = self.randf
-        state = self.state.buffer
-        randf_bound = self.randf_bound = clq.fn(randf, 
-            state=state)
         
-        sim.constants['randf'] = randf_bound
-        sim.constants['randexp'] = clq.fn(clqstd.randexp, 
-                                                randf=randf, state=state)
-        sim.constants['randn'] = clq.fn(clqstd.randn, 
-                                              randf=randf, state=state)
+        # TODO: When partial specialization works, use that.
+        sim.constants['randf'] = randf
+        sim.constants['randexp'] = clqstd.randexp
+        sim.constants['randn'] = clqstd.randn
+        sim.constants['rng_state'] = self.rng_state
         
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
         sim = self.sim

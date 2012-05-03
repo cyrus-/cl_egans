@@ -77,7 +77,7 @@ class LocalPoisson(Node):
             isi = randexp()*reciprocal_rate_mHz
             while isi < DT: # high rate processes may produce >1 spike/timestep
                 spike_target += weight
-                isi += randexp()*reciprocal_rate_mHz
+                isi += randexp(rng_state)*reciprocal_rate_mHz
             next_spike_alloc[idx_state] = next_spike + isi
         """ << g
         
