@@ -14,6 +14,7 @@ class State(Node):
         pass
         
     def pre_finalize(self):
+        self.allocation
         self.code_node = StandaloneCode(self, hook=self.calculations_hook, 
                                         code=self.calculations)
                  

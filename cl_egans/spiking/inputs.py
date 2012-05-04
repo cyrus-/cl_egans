@@ -38,6 +38,9 @@ class LocalPoisson(Node):
     @py.autoinit
     def __init__(self, parent, basename="LocalPoisson", rate=1): pass
     
+    def pre_finalize(self):
+        self.next_spike
+    
     rate = None
     """The rate, in Hz, of the Poisson process."""
     
@@ -87,7 +90,7 @@ class ExponentialSynapse(GenericSynapse):
     @py.autoinit
     def __init__(self, parent, basename="ExponentialSynapse",
                 tau=None, reversal=None): pass
-    
+                
     @py.lazy(property)
     def g(self):
         """Conductance state variable."""

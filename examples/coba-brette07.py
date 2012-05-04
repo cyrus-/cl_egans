@@ -99,19 +99,21 @@ spike_scatter_probe = SpikeScatterProbe(neurons)
 # Finalize specification
 sim.finalize()
 
-# Generate code
-tic("Generating code...")
-sim.generate()
-toc()
-print sim.code
-
 # Allocate memory
 tic("Allocating memory...")
 sim.allocate()
 toc()
 sim.print_memory_summary()
 
+# Generate code
+tic("Generating code...")
+sim.generate()
+toc()
+print sim.code
+
+print "CONSTANTS:"
 print sim.constants
+
 step_fn = sim._step_fn_even
 #print step_fn.free_variables
 concrete_fn = step_fn.get_concrete_fn(cl.cl_int, cl.cl_int)
@@ -123,3 +125,4 @@ print concrete_fn.program_source
 tic("Running...")
 sim.run()
 toc()
+

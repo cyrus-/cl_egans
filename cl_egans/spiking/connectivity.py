@@ -93,6 +93,8 @@ class AtomicReceiver(Node):
         constants[alloc_out.name] = alloc_in.buffer
     
     def pre_finalize(self):
+        self.alloc_in
+        self.alloc_out
         target = self.parent.spike_target
         target.reader = "(%s) + (%s*%s)" % (target.reader, str(self.weight), 
                                             self.name)

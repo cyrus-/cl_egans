@@ -435,8 +435,7 @@ class Simulation(Node):
         produced. This is also returned.
         """
         g = self._make_code_generator()
-        items = self.trigger_staged_cg_hook("step_kernel", g)
-        g.append(items)
+        self.trigger_staged_cg_hook("step_kernel", g)
         code = self.code = g.code
         self._generated = True
         return code
@@ -479,7 +478,11 @@ class Simulation(Node):
         return getattr(self, "_generated", False)
         
     def in_step_kernel(self, g):
-        ("def step_fn(timestep, realization_start):\n", g.tab) >> g
+        "def step_fn(" >> g
+        py.join(py.cons(("timestep", "realization_start"), 
+                         self.constants.iterkeys()), 
+                  ",\n            ") >> g
+        ("):\n", g.tab) >> g
         self.trigger_staged_cg_hook("step_kernel_body", g)
         
     def in_step_kernel_body(self, g):
@@ -737,25 +740,24 @@ class RNG(Node):
     # The initializer to use for the random number generator's state. Defaults
     # to randf.initializer.
     
-    rng_state = None
-    """Contains the state allocation after finalization."""
-    
-    def post_allocate(self):
-        sim = self.sim
-        self.rng_state = Allocation(self, "rng_state", 
+    @py.lazy(property)
+    def rng_state(self):
+        return Allocation(self, "rng_state", 
             (sim.n_work_items,), clqcl.int)
+
+    def pre_finalize(self):
+        self.rng_state
         
+        sim = self.sim
         if self.initializer is None:
             self.initializer = self.randf.initializer
 
         randf = self.randf
-        
-        # TODO: When partial specialization works, use that.
+
         sim.constants['randf'] = randf
         sim.constants['randexp'] = clqstd.randexp
         sim.constants['randn'] = clqstd.randn
-        sim.constants['rng_state'] = self.rng_state
-        
+    
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
         sim = self.sim
         sim.ctx.memcpy(self.state.buffer, self.initializer(sim.n_work_items))
