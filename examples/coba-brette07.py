@@ -116,8 +116,8 @@ print sim.constants
 
 step_fn = sim._step_fn_even
 #print step_fn.free_variables
-concrete_fn = step_fn.get_concrete_fn(cl.cl_int, cl.cl_int)
-print concrete_fn.program_source
+#concrete_fn = step_fn.get_concrete_fn(cl.cl_int, cl.cl_int)
+print step_fn.program_item.code
 #print concrete_fn.generate_kernel(ctx)
 #print "IT WORKS"
 

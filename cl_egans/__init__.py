@@ -145,6 +145,7 @@ import clq.stdlib as clqstd
 import clq.backends.opencl as clqcl
 import clq.backends.opencl.pyocl as cl 
 
+OpenCL = clqcl.Backend()
 
 class Error(Exception):
     """Base class for errors in pyocl_egans."""
@@ -199,7 +200,7 @@ class Simulation(Node):
                  parent=None, #@UnusedVariable
                  basename=None, #@UnusedVariable
                  **kwargs): #@UnusedVariable
-        self.constants = { }
+        self.constants = {}
                  
     @property
     def sim(self):
@@ -445,16 +446,23 @@ class Simulation(Node):
         if not self.generated:
             self.generate()
         self.trigger_staged_hook("prepare_step_fn_even")        
-        return clq.from_source(self.code, 
-            constants=self.constants, size_calculator=self._size_calculator)
+        generic_fn = clq.from_source(self.code)
+        
+        concrete_fn_args = [OpenCL,
+            clqcl.int,
+            clqcl.int]
+        for constant in self.constants.itervalues():
+            concrete_fn_args.append(constant.cl_type)
+            
+        concrete_fn = generic_fn.compile(*concrete_fn_args)
+        return concrete_fn
         
     @py.lazy(property)
     def _step_fn_odd(self):
         if not self.generated:
             self.generate()
         self.trigger_staged_hook("prepare_step_fn_odd")
-        return clq.from_source(self.code, 
-            constants=self.constants, size_calculator=self._size_calculator)
+        return clq.from_source(self.code)
     
     @property
     def n_work_items(self):
@@ -478,6 +486,10 @@ class Simulation(Node):
         return getattr(self, "_generated", False)
         
     def in_step_kernel(self, g):
+        # TODO: Get rid of these once globals work
+        self.constants['get_global_id'] = clqcl.get_global_id
+        self.constants['atom_add'] = clqcl.atom_add
+        
         "def step_fn(" >> g
         py.join(py.cons(("timestep", "realization_start"), 
                          self.constants.iterkeys()), 
@@ -743,7 +755,7 @@ class RNG(Node):
     @py.lazy(property)
     def rng_state(self):
         return Allocation(self, "rng_state", 
-            (sim.n_work_items,), clqcl.int)
+            (self.sim.n_work_items,), clqcl.int)
 
     def pre_finalize(self):
         self.rng_state

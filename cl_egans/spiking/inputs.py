@@ -40,6 +40,7 @@ class LocalPoisson(Node):
     
     def pre_finalize(self):
         self.next_spike
+        self.sim.rng
     
     rate = None
     """The rate, in Hz, of the Poisson process."""
