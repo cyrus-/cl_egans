@@ -122,7 +122,7 @@ print step_fn.program_item.code
 #print "IT WORKS"
 
 # Run simulation
-tic("Running...")
-sim.run()
-toc()
+#tic("Running...")
+#sim.run()
+#toc()
 

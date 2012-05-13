@@ -487,8 +487,13 @@ class Simulation(Node):
         
     def in_step_kernel(self, g):
         # TODO: Get rid of these once globals work
-        self.constants['get_global_id'] = clqcl.get_global_id
-        self.constants['atom_add'] = clqcl.atom_add
+        constants = self.constants
+        constants['get_global_id'] = clqcl.get_global_id
+        constants['get_global_size'] = clqcl.get_global_size
+        constants['min'] = clqcl.min
+        constants['atom_add'] = clqcl.atom_add
+        constants['atom_inc'] = clqcl.atom_inc 
+        constants['log'] = clqcl.log
         
         "def step_fn(" >> g
         py.join(py.cons(("timestep", "realization_start"), 
@@ -768,7 +773,7 @@ class RNG(Node):
 
         sim.constants['randf'] = randf
         sim.constants['randexp'] = clqstd.randexp
-        sim.constants['randn'] = clqstd.randn
+        #sim.constants['randn'] = clqstd.randn
     
     def on_initialize_memory(self, timestep_info): #@UnusedVariable
         sim = self.sim
